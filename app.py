@@ -13,6 +13,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+link_counter = 547
 
 def clean_date_string(date_str):
     try:
@@ -146,9 +147,11 @@ def generate_link():
         "isStudent": str('isStudent' in request.form).lower(),
         "isIndependent": str('isIndependent' in request.form).lower()
     }
+    global link_counter
+    link_counter += 1
 
     link = build_miluimnik_link(service_dates, service_before, user_flags)
-    return jsonify({'link': link})
+    return jsonify({'link': link, 'counter': link_counter})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

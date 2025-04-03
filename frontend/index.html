@@ -132,6 +132,8 @@
     </form>
 
     <div id="result"></div>
+    <div id="counter" style="margin-top: 15px; font-weight: bold;"></div>
+
   </div>
 
   <footer>
@@ -157,11 +159,12 @@
       const data = await response.json();
       if (data.link) {
          result.innerHTML = `<a href="${data.link}" target="_blank">מעבר לאתר miluimnik</a>`;
-        } else if (data.error) {
-             result.innerHTML = `<p style="color:red;">שגיאה: ${data.error}</p>`;
-            } else {
-                result.innerHTML = `<p style="color:red;">שגיאה כללית: לא התקבל קישור</p>`;
-                }
+         document.getElementById('counter').innerText = `🔢 מספר הקישורים שנוצרו: ${data.counter}`;    
+         } else if (data.error) {
+                 result.innerHTML = `<p style="color:red;">שגיאה: ${data.error}</p>`;
+                 } else {
+                    result.innerHTML = `<p style="color:red;">שגיאה כללית: לא התקבל קישור</p>`;
+                    }
 
      
     });
