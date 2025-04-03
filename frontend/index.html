@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>מחשבון זכאות מילואים</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #2d4d8c;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input[type="file"],
+    input[type="number"],
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .checkbox-group label {
+      background: #e6e6e6;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkbox-group input[type="checkbox"]:checked + span {
+      background: #2d4d8c;
+      color: white;
+    }
+
+    .checkbox-group span {
+      display: inline-block;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button {
+      background: #2d4d8c;
+      color: white;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #result a {
+      display: inline-block;
+      background: green;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .checkbox-group {
+        flex-direction: column;
+      }
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 10px;
+      font-size: 14px;
+      color: #555;
+      border-top: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>מחשבון מענקי מילואים כולל סריקת 3010</h2>
+    <form id="form">
+      <label>בחר טופס 3010 (PDF):</label>
+      <input type="file" name="file" required>
+
+      <label>מספר ימי מילואים לפני 7.10.2023:</label>
+      <input type="number" name="serviceBefore" value="0" required>
+
+      <label>בחר את הקטגוריות שלך:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="isCombat" value="true"><span>במערך הלוחם</span></label>
+        <label><input type="checkbox" name="hasChildren" value="true"><span>יש ילדים</span></label>
+        <label><input type="checkbox" name="hasChildrenSpecial" value="true"><span>ילדים עם צרכים מיוחדים</span></label>
+        <label><input type="checkbox" name="didVacationCancelled" value="true"><span>בוטלה חופשה</span></label>
+        <label><input type="checkbox" name="isOld" value="true"><span>מעל גיל 40</span></label>
+        <label><input type="checkbox" name="isStudent" value="true"><span>סטודנט</span></label>
+        <label><input type="checkbox" name="isIndependent" value="true"><span>עצמאי/ת</span></label>
+      </div>
+
+      <button type="submit">צור קישור לאתר miluimnik</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <footer>
+    נוצר ע"י אריאל הלוי | 📞 052-7289992 | 
+    <a href="https://www.linkedin.com/in/ariel-halevy" target="_blank">לפרופיל הלינקדאין שלי</a><br>
+    💼 מחפש משרת סטודנט בתחום הפיתוח
+  </footer>
+
+  <script>
+    const form = document.getElementById('form');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      result.innerHTML = 'שולח...';
+
+      const formData = new FormData(form);
+      const response = await fetch('/generate-link', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.link) {
+         result.innerHTML = `<a href="${data.link}" target="_blank">מעבר לאתר miluimnik</a>`;
+        } else if (data.error) {
+             result.innerHTML = `<p style="color:red;">שגיאה: ${data.error}</p>`;
+            } else {
+                result.innerHTML = `<p style="color:red;">שגיאה כללית: לא התקבל קישור</p>`;
+                }
+
+     
+    });
+  </script>
+</body>
+</html>
