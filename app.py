@@ -13,7 +13,20 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-link_counter = 547
+link_counter = 1321
+
+COUNTER_FILE = 'data/counter.txt'
+
+def read_counter():
+    try:
+        with open(COUNTER_FILE, 'r') as f:
+            return int(f.read())
+    except:
+        return 1321  # מספר ברירת מחדל אם הקובץ לא קיים או לא תקין
+
+def save_counter(value):
+    with open(COUNTER_FILE, 'w') as f:
+        f.write(str(value))
 
 def clean_date_string(date_str):
     try:
@@ -50,7 +63,7 @@ def clean_date_string(date_str):
 
 def extract_service_dates_from_pdf(path):
     text = ""
-    images = convert_from_path(path, dpi=300)
+    images = convert_from_path(path, dpi=150)
 
     for img in images:
         text += pytesseract.image_to_string(img, lang='heb+eng') + "\n"
@@ -123,11 +136,20 @@ def generate_link():
     if file.filename == '':
         return jsonify({'error': 'לא נבחר קובץ'}), 400
 
-    filename = secure_filename(file.filename)
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({'error': 'ניתן להעלות רק קובץ PDF'}), 400
+
+    filename = f"{uuid.uuid4()}.pdf"
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(file_path)
 
     service_dates = extract_service_dates_from_pdf(file_path)
+
+    try:
+        os.remove(file_path)
+    except Exception as e:
+        print(f"שגיאה במחיקת קובץ זמני: {e}")
+
     if service_dates == "INVALID_RANGE":
         return jsonify({'error': 'הקובץ מכיל תאריכים לפני 07/10/2023. יש להעלות טופס 3010 עדכני.'}), 400
     
@@ -147,9 +169,10 @@ def generate_link():
         "isStudent": str('isStudent' in request.form).lower(),
         "isIndependent": str('isIndependent' in request.form).lower()
     }
-    global link_counter
+    link_counter = read_counter()
     link_counter += 1
-
+    save_counter(link_counter)
+    
     link = build_miluimnik_link(service_dates, service_before, user_flags)
     return jsonify({'link': link, 'counter': link_counter})
 

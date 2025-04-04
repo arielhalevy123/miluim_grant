@@ -46,22 +46,26 @@
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 10px;
-    }
+      }
 
     .checkbox-group label {
       background: #e6e6e6;
+      color: black;
       border-radius: 20px;
       padding: 8px 15px;
       cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease-in-out;
     }
 
     .checkbox-group input[type="checkbox"] {
       display: none;
     }
 
-    .checkbox-group input[type="checkbox"]:checked + span {
-      background: #2d4d8c;
-      color: white;
+    .checkbox-group input[type="checkbox"]:checked + label {
+        background-color: #2d4d8c;
+        color: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
 
     .checkbox-group span {
@@ -118,29 +122,32 @@
       <input type="number" name="serviceBefore" value="0" required>
 
       <label>בחר את הקטגוריות שלך:</label>
+
       <div class="checkbox-group">
-        <label><input type="checkbox" name="isCombat" value="true"><span>במערך הלוחם</span></label>
-        <label><input type="checkbox" name="hasChildren" value="true"><span>יש ילדים</span></label>
-        <label><input type="checkbox" name="hasChildrenSpecial" value="true"><span>ילדים עם צרכים מיוחדים</span></label>
-        <label><input type="checkbox" name="didVacationCancelled" value="true"><span>בוטלה חופשה</span></label>
-        <label><input type="checkbox" name="isOld" value="true"><span>מעל גיל 40</span></label>
-        <label><input type="checkbox" name="isStudent" value="true"><span>סטודנט</span></label>
-        <label><input type="checkbox" name="isIndependent" value="true"><span>עצמאי/ת</span></label>
+        <input type="checkbox" id="combat" name="isCombat" value="true"> <label for="combat">במערך הלוחם</label>
+        <input type="checkbox" id="hasChildren" name="hasChildren" value="true">  <label for="hasChildren">יש ילדים</label>
+        <input type="checkbox" id="hasChildrenSpecial" name="hasChildrenSpecial" value="true">  <label for="hasChildrenSpecial">ילדים עם צרכים מיוחדים</label>
+        <input type="checkbox" id="didVacationCancelled" name="didVacationCancelled" value="true">  <label for="didVacationCancelled">בוטלה חופשה</label>
+        <input type="checkbox" id="isOld" name="isOld" value="true">  <label for="isOld">מעל גיל 40</label>
+        <input type="checkbox" id="isStudent" name="isStudent" value="true">  <label for="isStudent">סטודנט</label>
+        <input type="checkbox" id="isIndependent" name="isIndependent" value="true">  <label for="isIndependent">עצמאי/ת</label>
       </div>
+
 
       <button type="submit">צור קישור לאתר miluimnik</button>
     </form>
 
     <div id="result"></div>
     <div id="counter" style="margin-top: 15px; font-weight: bold;"></div>
-
   </div>
 
   <footer>
-    נוצר ע"י אריאל הלוי | 📞 052-7289992 | 
-    <a href="https://www.linkedin.com/in/ariel-halevy" target="_blank">לפרופיל הלינקדאין שלי</a><br>
-    💼 מחפש משרת סטודנט בתחום הפיתוח
+    Created by Ariel Halevy | Phone: 052-7289992 |
+    <a href="https://www.linkedin.com/in/ariel-halevy" target="_blank">LinkedIn Profile</a> |
+    <a href="https://github.com/arielhalevy123" target="_blank">GitHub</a><br>
+    Open to development positions
   </footer>
+
 
   <script>
     const form = document.getElementById('form');
@@ -159,7 +166,7 @@
       const data = await response.json();
       if (data.link) {
          result.innerHTML = `<a href="${data.link}" target="_blank">מעבר לאתר miluimnik</a>`;
-         document.getElementById('counter').innerText = `🔢 מספר הקישורים שנוצרו: ${data.counter}`;    
+         document.getElementById('counter').innerText = ` מספר הקישורים שנוצרו עד כה: ${data.counter}`;    
          } else if (data.error) {
                  result.innerHTML = `<p style="color:red;">שגיאה: ${data.error}</p>`;
                  } else {
